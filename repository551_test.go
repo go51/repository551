@@ -243,3 +243,40 @@ func TestCreate(t *testing.T) {
 		t.Errorf("取得に失敗しました。")
 	}
 }
+
+func TestUpdate(t *testing.T) {
+
+	repo := repository551.Load()
+	mtSample := mm.Get("Sample")
+
+	ret := repo.Find(db, mtSample, 6)
+	if ret == nil {
+		t.Errorf("取得に失敗しました。")
+	}
+	sample, _ := ret.(*Sample)
+
+	sample.GroupId = 1
+	sample.Name = "pubapp.biz_6"
+	sample.Description = "domain_6"
+
+	repo.Update(db, mtSample, sample)
+
+	ret = repo.Find(db, mtSample, 6)
+	if ret == nil {
+		t.Errorf("取得に失敗しました。")
+	}
+	sample, _ = ret.(*Sample)
+
+	if sample.Id != 6 {
+		t.Errorf("取得に失敗しました。")
+	}
+	if sample.GroupId != 1 {
+		t.Errorf("取得に失敗しました。")
+	}
+	if sample.Name != "pubapp.biz_6" {
+		t.Errorf("取得に失敗しました。")
+	}
+	if sample.Description != "domain_6" {
+		t.Errorf("取得に失敗しました。")
+	}
+}
