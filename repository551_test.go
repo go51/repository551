@@ -139,3 +139,54 @@ func TestFind(t *testing.T) {
 	}
 
 }
+
+func TestFindBy(t *testing.T) {
+
+	repo := repository551.Load()
+	mtSample := mm.Get("Sample")
+
+	param := map[string]interface{}{
+		"group_id": 1,
+	}
+	ret := repo.FindBy(db, mtSample, param)
+	if ret == nil {
+		t.Errorf("取得に失敗しました。")
+	}
+	if len(ret) != 1 {
+		t.Errorf("取得に失敗しました。")
+	}
+
+	param = map[string]interface{}{
+		"group_id": 2,
+	}
+	ret = repo.FindBy(db, mtSample, param)
+	if ret == nil {
+		t.Errorf("取得に失敗しました。")
+	}
+	if len(ret) != 3 {
+		t.Errorf("取得に失敗しました。")
+	}
+
+	param = map[string]interface{}{
+		"group_id": 3,
+	}
+	ret = repo.FindBy(db, mtSample, param)
+	if ret == nil {
+		t.Errorf("取得に失敗しました。")
+	}
+	if len(ret) != 1 {
+		t.Errorf("取得に失敗しました。")
+	}
+
+	param = map[string]interface{}{
+		"group_id": 4,
+	}
+	ret = repo.FindBy(db, mtSample, param)
+	if ret != nil {
+		t.Errorf("取得に失敗しました。")
+	}
+	if len(ret) != 0 {
+		t.Errorf("取得に失敗しました。")
+	}
+
+}
