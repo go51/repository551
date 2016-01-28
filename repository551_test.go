@@ -95,6 +95,32 @@ func (m *Sample) Scan(rows *sql.Rows) error {
 	return err
 }
 
+func (m *Sample) SqlValues(sqlType model551.SqlType) []interface{} {
+	values := make([]interface{}, 0, 5)
+
+	if sqlType == model551.SQL_LOGICAL_DELETE {
+		values = append(values, m.Id)
+	}
+	values = append(values, m.GroupId)
+	values = append(values, m.Name)
+	values = append(values, m.Description)
+	if sqlType == model551.SQL_UPDATE {
+		values = append(values, m.Id)
+	}
+	if sqlType == model551.SQL_LOGICAL_DELETE {
+		values = append(values, time.Now())
+	}
+
+	return values
+}
+
+func (m *Sample) SetId(id int64) {
+	m.Id = id
+}
+func (m *Sample) GetId() int64 {
+	return m.Id
+}
+
 func TestFind(t *testing.T) {
 
 	repo := repository551.Load()
@@ -189,4 +215,31 @@ func TestFindBy(t *testing.T) {
 		t.Errorf("取得に失敗しました。")
 	}
 
+}
+
+func TestCreate(t *testing.T) {
+
+	repo := repository551.Load()
+	mtSample := mm.Get("Sample")
+
+	sample := &Sample{
+		GroupId:     4,
+		Name:        "pubapp.biz_7",
+		Description: "domain_7",
+	}
+
+	repo.Create(db, mtSample, sample)
+
+	if sample.Id != 6 {
+		t.Errorf("取得に失敗しました。")
+	}
+	if sample.GroupId != 4 {
+		t.Errorf("取得に失敗しました。")
+	}
+	if sample.Name != "pubapp.biz_7" {
+		t.Errorf("取得に失敗しました。")
+	}
+	if sample.Description != "domain_7" {
+		t.Errorf("取得に失敗しました。")
+	}
 }

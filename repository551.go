@@ -79,3 +79,24 @@ func (r *Repository) FindBy(db *mysql551.Mysql, mInfo *model551.ModelInformation
 	return models
 
 }
+
+func (r *Repository) Create(db *mysql551.Mysql, mInfo *model551.ModelInformation, model interface{}) interface{} {
+
+	sql := mInfo.SqlInformation.Insert
+	sqlValueModel, ok := model.(model551.ValuesInterface)
+	if !ok {
+		panic(errors.New("Not found: 'T.SqlValues(sqlType SqlType) []interface{}' method"))
+	}
+	param := sqlValueModel.SqlValues(model551.SQL_INSERT)
+
+	_, lastInsertId := db.Exec(sql, param...)
+
+	idModel, ok := model.(model551.PrimaryInterface)
+	if !ok {
+		panic(errors.New("Not found: 'T.SetId(int64)', 'T.Id() int64' method"))
+	}
+
+	idModel.SetId(lastInsertId)
+
+	return model
+}
