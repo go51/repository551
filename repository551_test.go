@@ -280,3 +280,21 @@ func TestUpdate(t *testing.T) {
 		t.Errorf("取得に失敗しました。")
 	}
 }
+
+func TestDelete(t *testing.T) {
+
+	repo := repository551.Load()
+	mtSample := mm.Get("Sample")
+
+	ret := repo.Find(db, mtSample, 6)
+	if ret == nil {
+		t.Errorf("取得に失敗しました。")
+	}
+
+	repo.Delete(db, mtSample, ret)
+
+	ret = repo.Find(db, mtSample, 6)
+	if ret != nil {
+		t.Errorf("削除に失敗しました。")
+	}
+}
