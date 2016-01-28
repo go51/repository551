@@ -114,3 +114,29 @@ func (r *Repository) Update(db *mysql551.Mysql, mInfo *model551.ModelInformation
 
 	return model
 }
+
+func (r *Repository) Delete(db *mysql551.Mysql, mInfo *model551.ModelInformation, model interface{}) {
+
+	// Delete
+	sql := mInfo.SqlInformation.Delete
+	idModel, ok := model.(model551.PrimaryInterface)
+	if !ok {
+		panic(errors.New("Not found: 'T.SetId(int64)', 'T.Id() int64' method"))
+	}
+	db.Exec(sql, idModel.GetId())
+
+	if !mInfo.TableInformation.DeleteTable {
+		return
+	}
+
+	// Logical Delete( Insert into delete table.)
+	sql = mInfo.SqlInformation.LogicalDelete
+	sqlValueModel, ok := model.(model551.ValuesInterface)
+	if !ok {
+		panic(errors.New("Not found: 'T.SqlValues(sqlType SqlType) []interface{}' method"))
+	}
+	param := sqlValueModel.SqlValues(model551.SQL_LOGICAL_DELETE)
+
+	db.Exec(sql, param...)
+
+}
