@@ -80,7 +80,7 @@ func (r *Repository) FindBy(db *mysql551.Mysql, mInfo *model551.ModelInformation
 
 }
 
-func (r *Repository) FindOneBy(db *mysql551.Mysql, mInfo *model551.ModelInformation, param map[string]interface{}) (interface{}, error) {
+func (r *Repository) FindOneBy(db *mysql551.Mysql, mInfo *model551.ModelInformation, param map[string]interface{}) interface{} {
 
 	sql := mInfo.SqlInformation.Select
 	var values []interface{}
@@ -96,7 +96,7 @@ func (r *Repository) FindOneBy(db *mysql551.Mysql, mInfo *model551.ModelInformat
 
 	for rows.Next() {
 		if model != nil {
-			return nil, errors.New("Extraction result there is more than one.")
+			panic(errors.New("Extraction result there is more than one."))
 		}
 		model = mInfo.NewFuncPointer()
 		modelScan, ok := model.(model551.ScanInterface)
