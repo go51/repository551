@@ -80,6 +80,41 @@ func (r *Repository) FindBy(db *mysql551.Mysql, mInfo *model551.ModelInformation
 
 }
 
+func (r *Repository) FindOneBy(db *mysql551.Mysql, mInfo *model551.ModelInformation, param map[string]interface{}) (interface{}, error) {
+
+	sql := mInfo.SqlInformation.Select
+	var values []interface{}
+	for key, value := range param {
+		sql = string551.Join(sql, " AND `"+key+"` = ?")
+		values = append(values, value)
+	}
+
+	rows := db.Query(sql, values...)
+	defer rows.Close()
+
+	var model interface{} = nil
+
+	for rows.Next() {
+		if model != nil {
+			return nil, errors.New("Extraction result there is more than one.")
+		}
+		model = mInfo.NewFuncPointer()
+		modelScan, ok := model.(model551.ScanInterface)
+		if !ok {
+			panic(errors.New("Not found: 'T.Scan(rows *sql.rows) error' method"))
+		}
+
+		err := modelScan.Scan(rows)
+		if err != nil {
+			panic(err)
+		}
+
+	}
+
+	return model
+
+}
+
 func (r *Repository) Create(db *mysql551.Mysql, mInfo *model551.ModelInformation, model interface{}) interface{} {
 
 	sql := mInfo.SqlInformation.Insert
