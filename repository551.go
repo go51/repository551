@@ -118,6 +118,10 @@ func (r *Repository) FindOneBy(db *mysql551.Mysql, mInfo *model551.ModelInformat
 func (r *Repository) Create(db *mysql551.Mysql, mInfo *model551.ModelInformation, model interface{}) interface{} {
 
 	sql := mInfo.SqlInformation.Insert
+	if iInsert, ok := model.(model551.SqlInsertInterface); ok {
+		sql = iInsert.SqlInsert()
+	}
+
 	sqlValueModel, ok := model.(model551.ValuesInterface)
 	if !ok {
 		panic(errors.New("Not found: 'T.SqlValues(sqlType SqlType) []interface{}' method"))
@@ -139,6 +143,10 @@ func (r *Repository) Create(db *mysql551.Mysql, mInfo *model551.ModelInformation
 func (r *Repository) Update(db *mysql551.Mysql, mInfo *model551.ModelInformation, model interface{}) interface{} {
 
 	sql := mInfo.SqlInformation.Update
+	if iUpdate, ok := model.(model551.SqlUpdateInterface); ok {
+		sql = iUpdate.SqlUpdate()
+	}
+
 	sqlValueModel, ok := model.(model551.ValuesInterface)
 	if !ok {
 		panic(errors.New("Not found: 'T.SqlValues(sqlType SqlType) []interface{}' method"))
